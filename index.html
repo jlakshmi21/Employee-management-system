@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<!-- This is for using Thymeleaf -->
+<html xmlns:th="http://www.thymeleaf.org">	
+<head>
+<meta charset="UTF-8">
+<title>Employee Management System</title>
+<!-- Bootstrap CSS an font-awesome -->
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.0/css/font-awesome.css" integrity="sha512-CB+XYxRC7cXZqO/8cP3V+ve2+6g6ynOnvJD6p4E4y3+wwkScH9qEOla+BTHzcwB4xKgvWn816Iv0io5l3rAOBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://kit.fontawesome.com/6ec9c7cfba.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+<!-- jQuery library -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables library -->
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<!-- Bootstrap library: -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body style="">
+	
+	<div class="table-responsive p-3">
+	<div class="row">
+		<h1 class="col-10" >Employee List</h1>
+		<!-- The link which sends GET request to "/showNewEmployeeForm"  -->
+		<a th:href="@{/showNewEmployeeForm}" style="height:45px;margin-top:25px;margin-bottom:15px;margin-left:35px; "
+			class="btn addemp btn-primary btn-lg ">Add new employee</a><br><br>
+	</div>
+		<table id="example" class="display table-bordered table-striped" style="width:px;">
+			<thead class="thead-dark" >
+				<tr class="bg-dark text-light">
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Job Role</th>
+					<th>Department</th>
+					<th>Experience</th>
+					<th>HighestQualification</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+
+			<tbody class="centered">
+			<!-- You can access model attributes which are added in a Controller(EmployeeController.java) with ${attributeName}.
+				 In this case, it is "${listEmployees}".
+			     To show all employees data in this table, you need to use "th:each" in the thymeleaf template and iterate the employee of listEmployees -->
+				<tr th:each="employee: ${listEmployees}">
+					<td th:text="${employee.firstName}"></td>
+					<td th:text="${employee.lastName}"></td>
+					<td th:text="${employee.email}"></td>
+					<td th:text="${employee.jobRole}"> </td>
+					<td th:text="${employee.department}"> </td>
+					<td th:text="${employee.experience}"> </td>
+					<td th:text="${employee.highestQualification}"> </td> 
+					<td>
+						<!-- The link which sends GET request to "/view/{id}" (id is employee.id)  -->
+						<button class="btn btn-primary viewemp" data-toggle="modal" data-target="#viewEmployee" 
+						th:attr="data-id=${employee.id}"><i class="fa fa-eye" ></i></button>
+						<!-- The link which sends GET request to "/showFormForUpdate/{id}" (id is employee.id) -->
+						<a th:href="@{/showFormForUpdate/{id}(id=${employee.id})}" class="btn btn-warning"><i class="fa fa-pencil-square-o" ></i></a>
+							<!-- The link which sends GET request to "/delete/{id}" (id is employee.id)  -->
+						<a th:href="@{/delete/{id}(id=${employee.id})}" class="btn btn-danger"><i class="fa fa-trash" ></i></a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+<!-- View popup Modal for displaying employee details -->
+<div class="modal fade" id="viewEmployeeModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Employee xxx Details</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- This is where the employee details will be displayed -->
+                <table class="table table-borderless table-striped table-sm p-5">
+                    <tbody>
+                        <tr class="p-2">
+                            <td><b>First Name</b></td>
+                            <td><span id="employee_firstName"></span></td>
+                        </tr>
+	                	<tr class="p-2">
+	                    	<td><b>Last Name</b></td>
+	                    	<td><span id="employee_lastName"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Email</b></td>
+	                    	<td><span id="employee_email"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Phone Number</b></td>
+	                    	<td><span id="employee_phoneNumber"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Address</b></td>
+	                    	<td><span id="employee_address"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Pan Number</b></td>
+	                    	<td><span id="employee_panNumber"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Job Role</b></td>
+	                    	<td><span id="employee_jobRole"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Department</b></td>
+	                    	<td><span id="employee_department"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Highest Qualification</b></td>
+	                    	<td><span id="employee_highestQualification"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Start Date</b></td>
+	                    	<td><span id="employee_startDate"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Salary</b></td>
+	                    	<td><span id="employee_salary"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Experience</b></td>
+	                    	<td><span id="employee_experience"></span></td>
+	                	</tr>
+	                	<tr class="p-2">
+	                    	<td><b>Emergency Contact</b></td>
+	                    	<td><span id="employee_emergencyContact"></span></td>
+	                	</tr>
+	            	</tbody>
+         		</table>
+            </div>
+        </div>
+    </div>
+</div>
+	<!-- View pop model up end -->
+</body>
+<script>
+$(document).ready(function () {
+    $('#example').DataTable({
+        search: {
+            return: true,
+        },
+    });
+
+   	 // Listen for clicks on the "viewemp" buttons
+    $(".viewemp").click(function() {
+        // Get the employee ID from the data-id attribute
+        var id = $(this).data("id");
+		//console.log("id"+id);
+        // Make an AJAX request to get the employee details for this ID
+        $.ajax({
+            url: "/viewemp/" + id,
+            type: "GET",
+            success: function(data) {
+                 //update the modal body with the employee details
+                //$(".modal-body").html(data);
+                $("#employee_firstName").html(data.firstName);
+                $("#employee_lastName").html(data.lastName);
+				$('#employee_email').html(data.lastName);
+                $('#employee_phoneNumber').html(data.phoneNumber);
+                $('#employee_address').html(data.address);
+                $('#employee_panNumber').html(data.panNumber);
+                $('#employee_jobRole').html(data.jobRole);
+                $('#employee_department').html(data.department);
+                $('#employee_highestQualification').html(data.highestQualification);
+                $('#employee_startDate').html(data.startDate);
+                $('#employee_salary').html(data.salary);
+                $('#employee_experience').html(data.experience);
+                $('#employee_emergencyContact').html(data.emergencyContact);
+                // Show the modal
+                $("#viewEmployeeModal").modal("show");
+            },
+            error: function() {
+                alert("Error loading employee details.");
+            }
+        });
+    });
+});
+</script>
+</html>
